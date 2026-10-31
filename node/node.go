@@ -34,7 +34,7 @@ type NodeStats struct {
 	Uptime                   float64 `json:"uptime"`
 	BlockValue               float64 `json:"block_value"`
 	AttemptsToBlock          uint64  `json:"attempts_to_block"`
-	//MinerHashRates               map[string]string            `json:"miner_hash_rates"`		// Wrong type. Doesn't matter, isn't useful.
+	MinerHashRates               map[string]float64           `json:"miner_hash_rates"` // payout address -> hashrate, one entry per miner
 	//MinerDeadHashRates           map[string]string            `json:"miner_dead_hash_rates"`
 	//MinerLastDifficulties        map[string]string            `json:"miner_last_difficulties"`
 	Peers                        Peers                        `json:"peers"`
@@ -46,6 +46,7 @@ type NodeStats struct {
 	Warnings                     []string                     `json:"warnings"`
 	ProtocolVersion              uint                         `json:"protocol_version"`
 	AttemptsToShare              uint                         `json:"attempts_to_share"`
+	Synced                       *bool                        `json:"synced,omitempty"` // only p2pool-go nodes report this
 }
 type Peers struct {
 	Outgoing uint `json:"outgoing"`

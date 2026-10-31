@@ -9,7 +9,7 @@
 
     "GeoLocation": {
         "API": "api.ipstack.com/",
-        "AcessKey": "?access_key=aab0f46fb90edd0aab046c",
+        "AcessKey": "?access_key=YOUR_IPSTACK_KEY",
         "Parameters": "&fields=country_name,region_name,country_code,location"
     },
 

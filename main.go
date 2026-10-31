@@ -26,11 +26,11 @@ func main() {
 	logging.Infof("Config loaded successfully\n")
 
 	// Start scanning
-	nodes := scanner.Nodes{}
-	go scanner.Scanner(&nodes)
+	nodes := &scanner.NodeList{}
+	go scanner.Scanner(nodes)
 
 	// API endpoint(s)
-	go handler.Router(&nodes)
+	go handler.Router(nodes)
 
 	// Hold up program for Go routines and exit gracefully
 	sc := make(chan os.Signal, 1)
