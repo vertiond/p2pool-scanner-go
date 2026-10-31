@@ -76,6 +76,9 @@ func runOnce(out string, timeout time.Duration) error {
 	}
 
 	found := nodes.Snapshot()
+	if found == nil {
+		found = []scanner.Node{} // write [] rather than null
+	}
 	sort.Slice(found, func(i, j int) bool { return found[i].IP < found[j].IP })
 	data, err := json.MarshalIndent(found, "", "  ")
 	if err != nil {

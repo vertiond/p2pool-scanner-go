@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/KforG/p2pool-scanner-go/config"
@@ -21,7 +20,7 @@ func Router(l *scanner.NodeList) {
 	r.Get("/nodes", getNodes(l))
 
 	logging.Infof("Listening on port %s", config.Active.WebPort)
-	http.ListenAndServe(fmt.Sprintf(":"+config.Active.WebPort), r)
+	http.ListenAndServe(":"+config.Active.WebPort, r)
 }
 
 func getNodes(l *scanner.NodeList) http.HandlerFunc {

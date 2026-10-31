@@ -27,7 +27,7 @@ type Geo struct {
 func GetGeoLocation(nodeIPPort string, jsonPayload *Geo) error {
 	s := strings.SplitN(nodeIPPort, ":", len(nodeIPPort))
 	nodeIP := s[0]
-	err := util.GetJson(fmt.Sprintf(config.Active.GeoLocation.API+nodeIP+config.Active.GeoLocation.AcessKey+config.Active.GeoLocation.Parameters), &jsonPayload)
+	err := util.GetJson(config.Active.GeoLocation.API+nodeIP+config.Active.GeoLocation.AcessKey+config.Active.GeoLocation.Parameters, &jsonPayload)
 	if err != nil {
 		return err
 	}

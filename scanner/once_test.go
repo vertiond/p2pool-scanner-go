@@ -10,7 +10,12 @@ import (
 	"testing"
 	"time"
 
+	"github.com/libp2p/go-libp2p"
+	"github.com/libp2p/go-libp2p/core/network"
+	"github.com/libp2p/go-libp2p/core/protocol"
+
 	"github.com/KforG/p2pool-scanner-go/config"
+	"github.com/KforG/p2pool-scanner-go/p2pgo"
 )
 
 // fakeNode serves handler on ip:port and stops it when the test ends.
@@ -107,5 +112,38 @@ func TestScanOnceStopsAtDeadline(t *testing.T) {
 	ScanOnce(ctx, &NodeList{})
 	if took := time.Since(start); took > time.Second {
 		t.Fatalf("ScanOnce took %v after a 200ms deadline", took)
+	}
+}
+
+func TestScanOnceAddsP2PoolGoNodes(t *testing.T) {
+	h, err := libp2p.New(libp2p.ListenAddrStrings("/ip4/127.0.0.1/tcp/0"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { h.Close() })
+	h.SetStreamHandler(protocol.ID(p2pgo.PeerExProtocol), func(s network.Stream) {
+		defer s.Close()
+		fmt.Fprint(s, `[]`)
+	})
+	webPort := freePort(t)
+	fakeNode(t, "127.0.0.1", webPort, func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprint(w, `{"fee":0,"synced":true,"miner_hash_rates":{}}`)
+	})
+	withConfig(t, func(c *configStruct) {
+		c.BootstrapNodes = nil
+		c.P2PoolGo.BootstrapPeers = []string{fmt.Sprintf("%s/p2p/%s", h.Addrs()[0], h.ID())}
+		c.P2PoolGo.WebPort = fmt.Sprint(webPort)
+	})
+
+	l := &NodeList{}
+	ScanOnce(context.Background(), l)
+
+	nodes := l.Snapshot()
+	want := fmt.Sprintf("127.0.0.1:%d", webPort)
+	if len(nodes) != 1 || nodes[0].IP != want || nodes[0].Network != "p2pool-go" {
+		t.Fatalf("found %+v, want one p2pool-go node at %s", nodes, want)
+	}
+	if s := nodes[0].LocalStats.Synced; s == nil || !*s {
+		t.Fatalf("synced = %v, want true", s)
 	}
 }

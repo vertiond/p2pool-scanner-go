@@ -41,6 +41,26 @@ This will leave the geolocation fields in the JSON response blank.
 
 Alternatively, another geolocation service can used by modifying the fields inside `GeoLocation` (and possibly util/geo.go) slightly.
 
+#### P2Pool-Go nodes
+P2Pool-Go nodes run their own network and talk over libp2p, so they never show up in a legacy node's peer list.
+To scan them too, add a `P2PoolGo` block (see `example_config.json`):
+
+- `BootstrapPeers`: libp2p multiaddrs of P2Pool-Go nodes, ending in `/p2p/<peer id>`. The scanner asks each node for its peers over P2Pool-Go's peer exchange (`/p2pool/peers/1.0.0`) and keeps following new peers.
+- `WebPort`: the port P2Pool-Go nodes serve `/local_stats` on (9172 by default). Only peers that answer there are listed.
+
+Each node in the output has a `network` field, `legacy` or `p2pool-go`, and a `response_ms` field with how long `/local_stats` took to answer.
+
+### Scanning once
+`-once` scans a single time, writes the nodes as JSON and exits, instead of rescanning forever and serving `/nodes`. This suits scheduled jobs such as CI.
+
+```bash
+./main -once -config config.json -out nodes.json -timeout 10m
+```
+
+- `-config`: config file to read (default `config.json`).
+- `-out`: file to write the JSON to, or `-` for stdout (the default). In this mode, logs go to stderr and `debug.log`.
+- `-timeout`: stop after this long and write what was found (default `10m`).
+
 ## Building
 The project utilizes one external dependency [chi](https://github.com/go-chi/chi), to handle HTTP requests.
 

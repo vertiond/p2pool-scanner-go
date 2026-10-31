@@ -1,7 +1,6 @@
 package scanner
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/KforG/p2pool-scanner-go/config"
@@ -91,7 +90,7 @@ func loadBootstrapNodes(l *NodeList) {
 
 func discoverNewNodes(l *NodeList, peers []string) {
 	for i := 0; i < len(peers); i++ {
-		addr := fmt.Sprintf(peers[i] + ":" + config.Active.Port)
+		addr := peers[i] + ":" + config.Active.Port
 		if l.Has(addr) {
 			// peer is the same as an already known node
 			continue

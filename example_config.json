@@ -36,5 +36,10 @@
         }
     ]
     },
-    "WebPort": "80"
+    "WebPort": "80",
+
+    "P2PoolGo": {
+        "BootstrapPeers": ["/dns4/p2poolvtc.com/tcp/9348/p2p/12D3KooWNiQ2TSXEhFgZrsJuuk9xxNheph8b23pK4RHaPSQFNDwU"],
+        "WebPort": "9172"
+    }
 }
