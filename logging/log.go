@@ -17,6 +17,12 @@ func SetLogFile(logFile io.Writer) {
 	}
 }
 
+// SetLogWriter sends log output to w only, leaving stdout free for data.
+func SetLogWriter(w io.Writer) {
+	log.SetFlags(log.Ldate | log.Ltime | log.Lmicroseconds)
+	log.SetOutput(w)
+}
+
 func getPrefix(level string) string {
 	return fmt.Sprintf("[%s]", level)
 }

@@ -1,6 +1,7 @@
 package node
 
 import (
+	"context"
 	"fmt"
 	"net"
 	"strings"
@@ -11,8 +12,13 @@ import (
 )
 
 func GetPeers(IP string) (peers []string, err error) {
+	return GetPeersCtx(context.Background(), IP)
+}
+
+// GetPeersCtx returns the IPs of a legacy node's peers.
+func GetPeersCtx(ctx context.Context, IP string) (peers []string, err error) {
 	var jsonPayload string
-	err = util.GetJson(fmt.Sprintf("%s/peer_addresses", IP), &jsonPayload)
+	err = util.GetJsonCtx(ctx, fmt.Sprintf("%s/peer_addresses", IP), &jsonPayload)
 	if err != nil {
 		return peers, err
 	}
@@ -77,7 +83,11 @@ type MyHashRatesInLastHour struct {
 }
 
 func GetLocalStats(IP string, node *NodeStats) error {
-	err := util.GetJson(fmt.Sprintf("%s/local_stats", IP), node)
+	return GetLocalStatsCtx(context.Background(), IP, node)
+}
+
+func GetLocalStatsCtx(ctx context.Context, IP string, node *NodeStats) error {
+	err := util.GetJsonCtx(ctx, fmt.Sprintf("%s/local_stats", IP), node)
 	if err != nil {
 		return err
 	}
@@ -94,7 +104,11 @@ type GlobalStats struct {
 }
 
 func GetGlobalStats(url string, globStats *GlobalStats) error {
-	err := util.GetJson(fmt.Sprintf("%s/global_stats", url), globStats)
+	return GetGlobalStatsCtx(context.Background(), url, globStats)
+}
+
+func GetGlobalStatsCtx(ctx context.Context, url string, globStats *GlobalStats) error {
+	err := util.GetJsonCtx(ctx, fmt.Sprintf("%s/global_stats", url), globStats)
 	if err != nil {
 		return err
 	}
